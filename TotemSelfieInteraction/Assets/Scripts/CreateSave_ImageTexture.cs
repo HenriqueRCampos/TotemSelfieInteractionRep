@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
@@ -9,29 +10,34 @@ using UnityEngine.Windows.WebCam;
 
 public class CreateSave_ImageTexture : MonoBehaviour
 {
+    [Header("References")]
     [SerializeField] private RectTransform _objToScreenshot;
     [SerializeField] private Button _takeScreenshotButton;
-    public GameObject objRenderCameraViewImage, objRenderCameraViewImagetwo, uiPhotoButton, uiSaveButton, uiDeleteButton;
-    Texture2D textureImage;
-    WebCamTexture webCam;
-    bool saveImage;
-    int indexImage = 00;
+    [SerializeField] private GameObject shaderMaterial, uiSaveButton, uiDeleteButton, S_sliders;
+
+    [Header("Shader Values Control")]
+    [SerializeField] private Slider brightnees;
+    [SerializeField] private Slider temperature, contrast;
+    private float defoultValue_B = 0.6f, defoultValue_T = 0.1f, defoultValue_C = 3.0f;
+    private Texture2D textureImage;
+    private Material shaderTexture;
+    private WebCamTexture webCam;
+    private bool saveImage;
+    private int indexImage = 00;
 
     void Start()
     {
-        
         webCam = new();
-        objRenderCameraViewImage.GetComponent<RawImage>().texture= webCam;
-        objRenderCameraViewImagetwo.GetComponent<RawImage>().texture = webCam;
-        Material shaderTexture = objRenderCameraViewImagetwo.GetComponent<RawImage>().material;
+       shaderTexture = shaderMaterial.GetComponent<RawImage>().material;
         shaderTexture.SetTexture("_Texture2D", webCam);
         CameraManager();
         _takeScreenshotButton.onClick.AddListener(TakeScreenshotAndSaveButton);
     }
-    private void TakeScreenshotAndSaveButton()
+    void Update()
     {
-        StartCoroutine(TakeScreenShotAndSave());
-        uiPhotoButton.SetActive(false);
+        shaderTexture.SetFloat("_Light", brightnees.value);
+        shaderTexture.SetFloat("_Temperature", temperature.value);
+        shaderTexture.SetFloat("_Contrast_Intensity", contrast.value);
     }
     
     public IEnumerator TakeScreenShotAndSave()
@@ -41,6 +47,7 @@ public class CreateSave_ImageTexture : MonoBehaviour
         CameraManager();
         uiSaveButton.SetActive(true);
         uiDeleteButton.SetActive(true);
+        S_sliders.SetActive(true);
         yield return new WaitUntil(() => this.saveImage);
 
         yield return new WaitForEndOfFrame();
@@ -67,7 +74,8 @@ public class CreateSave_ImageTexture : MonoBehaviour
         Destroy(textureImage);
         CameraManager();
         this.saveImage = false;
-      
+        S_sliders.SetActive(false);
+        brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C;
         Debug.Log("foto salva");
     }
 
@@ -82,30 +90,23 @@ public class CreateSave_ImageTexture : MonoBehaviour
             webCam.Pause();
         }
     }
-    public void SaveDeleteScreenShotButton(bool button)
+    private void TakeScreenshotAndSaveButton()
+    {
+        StartCoroutine(TakeScreenShotAndSave());
+        _takeScreenshotButton.gameObject.SetActive(false);
+    }
+    public void SaveDeleteScreenShot(bool saveImage)
     {
         uiSaveButton.SetActive(false);
         uiDeleteButton.SetActive(false);
-        uiPhotoButton.SetActive(true);
-        if (button)
-        {
-            SaveDeleteScreenShot(true);
-        }
-        else
-        {
-            SaveDeleteScreenShot(false);
-        }
-    }
-
-
-    public void SaveDeleteScreenShot(bool saveImage)
-    {
+        _takeScreenshotButton.gameObject.SetActive(true);
         if (saveImage)
         {
             this.saveImage = true;
         }
         else
         {
+            S_sliders.SetActive(false);
             StopAllCoroutines();
             CameraManager();
             Debug.Log("foto apagada");

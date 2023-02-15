@@ -36,6 +36,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SampleTexture2D_8db9ea3ef60545e1a315051c2ff3bfdb_Texture_1:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _Texture2D:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -54,14 +58,32 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
+    - _Contrast: 0
+    - _ContrastX: 1
+    - _ContrastY: 1
+    - _ContrastZ: 1
+    - _Contrast_Intensity: 3
     - _EnableExternalAlpha: 0
+    - _HUE: 0
+    - _Light: 0.43
     - _Opacity: 1
     - _QueueControl: 0
     - _QueueOffset: 0
+    - _Saturation: 0
+    - _SaturationX: 1
+    - _SaturationY: 1
+    - _SaturationZ: 1
+    - _Saturation_Intensity: 1
+    - _Temp: 2.18
+    - _Temperature: 0.23
+    - _Tint: 0
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Contrast: {r: 1, g: 1, b: 1, a: 0}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
     - _Offset: {r: 0, g: 0, b: 0, a: 0}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _Saturation: {r: 1, g: 1, b: 1, a: 0}
     - _Tiling: {r: 1, g: 1, b: 0, a: 0}
+    - _White: {r: 1, g: 1, b: 1, a: 0}
   m_BuildTextureStacks: []

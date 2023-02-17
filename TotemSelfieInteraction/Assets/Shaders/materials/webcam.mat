@@ -62,10 +62,10 @@ Material:
     - _ContrastX: 1
     - _ContrastY: 1
     - _ContrastZ: 1
-    - _Contrast_Intensity: 3
+    - _Contrast_Intensity: 1.5
     - _EnableExternalAlpha: 0
-    - _HUE: 0
-    - _Light: 0.6
+    - _HUE: -130.28
+    - _Light: 0.8
     - _Opacity: 1
     - _QueueControl: 0
     - _QueueOffset: 0
@@ -73,10 +73,10 @@ Material:
     - _SaturationX: 1
     - _SaturationY: 1
     - _SaturationZ: 1
-    - _Saturation_Intensity: 1
+    - _Saturation_Intensity: 4.84
     - _Temp: 2.18
     - _Temperature: 0.1
-    - _Tint: 0
+    - _Tint: 15.2
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Contrast: {r: 1, g: 1, b: 1, a: 0}

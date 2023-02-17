@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Threading;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.WebCam;
@@ -17,7 +18,8 @@ public class CreateSave_ImageTexture : MonoBehaviour
 
     [Header("Shader Values Control")]
     [SerializeField] private Slider brightnees;
-    [SerializeField] private Slider temperature, contrast;
+    [SerializeField] private Slider temperature, contrast, saturation;
+
     private float defoultValue_B = 0.6f, defoultValue_T = 0.1f, defoultValue_C = 3.0f;
     private Texture2D textureImage;
     private Material shaderTexture;
@@ -38,6 +40,7 @@ public class CreateSave_ImageTexture : MonoBehaviour
         shaderTexture.SetFloat("_Light", brightnees.value);
         shaderTexture.SetFloat("_Temperature", temperature.value);
         shaderTexture.SetFloat("_Contrast_Intensity", contrast.value);
+        shaderTexture.SetFloat("_Saturation_Intensity", saturation.value);
     }
     
     public IEnumerator TakeScreenShotAndSave()

@@ -9,12 +9,12 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.WebCam;
 
-public class CreateSave_ImageTexture : MonoBehaviour
+public class SelfieManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private RectTransform _objToScreenshot;
     [SerializeField] private Button _takeScreenshotButton;
-    [SerializeField] private GameObject shaderMaterial, uiSaveButton, uiDeleteButton, S_sliders;
+    [SerializeField] private GameObject shaderMaterial, uiSaveButton, uiDeleteButton, Scrollview, photoTimerAnimation;
 
     [Header("Shader Values Control")]
     [SerializeField] private Slider brightnees;
@@ -23,7 +23,7 @@ public class CreateSave_ImageTexture : MonoBehaviour
     private float defoultValue_B = 0.6f, defoultValue_T = 0.1f, defoultValue_C = 3.0f;
     private Texture2D textureImage;
     private Material shaderTexture;
-    private WebCamTexture webCam;
+    public WebCamTexture webCam;
     private bool saveImage;
     private int indexImage = 00;
 
@@ -45,12 +45,13 @@ public class CreateSave_ImageTexture : MonoBehaviour
     
     public IEnumerator TakeScreenShotAndSave()
     {
-        yield return new WaitForSeconds(5f);
-
+        photoTimerAnimation.SetActive(true);
+        yield return new WaitForSeconds(10f);
+        photoTimerAnimation.SetActive(false);
         CameraManager();
         uiSaveButton.SetActive(true);
         uiDeleteButton.SetActive(true);
-        S_sliders.SetActive(true);
+        Scrollview.SetActive(true);
         yield return new WaitUntil(() => this.saveImage);
 
         yield return new WaitForEndOfFrame();
@@ -77,7 +78,7 @@ public class CreateSave_ImageTexture : MonoBehaviour
         Destroy(textureImage);
         CameraManager();
         this.saveImage = false;
-        S_sliders.SetActive(false);
+        Scrollview.SetActive(false);
         brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C;
         Debug.Log("foto salva");
     }
@@ -109,11 +110,12 @@ public class CreateSave_ImageTexture : MonoBehaviour
         }
         else
         {
-            S_sliders.SetActive(false);
+            Scrollview.SetActive(false);
             StopAllCoroutines();
             CameraManager();
             Debug.Log("foto apagada");
         }
     }
 }
+
 

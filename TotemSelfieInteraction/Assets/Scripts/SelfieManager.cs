@@ -14,13 +14,13 @@ public class SelfieManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private RectTransform _objToScreenshot;
     [SerializeField] private Button _takeScreenshotButton;
-    [SerializeField] private GameObject shaderMaterial, uiSaveButton, uiDeleteButton, Scrollview, photoTimerAnimation;
+    [SerializeField] private GameObject shaderMaterial, uiSaveButton, uiDeleteButton, S_sliders, photoTimerAnimation;
 
     [Header("Shader Values Control")]
     [SerializeField] private Slider brightnees;
     [SerializeField] private Slider temperature, contrast, saturation;
 
-    private float defoultValue_B = 0.6f, defoultValue_T = 0.1f, defoultValue_C = 3.0f;
+    private float defoultValue_B = 0.8f, defoultValue_T = 0.1f, defoultValue_C = 1.5f, defoultValue_S = 1.9f;
     private Texture2D textureImage;
     private Material shaderTexture;
     public WebCamTexture webCam;
@@ -51,7 +51,7 @@ public class SelfieManager : MonoBehaviour
         CameraManager();
         uiSaveButton.SetActive(true);
         uiDeleteButton.SetActive(true);
-        Scrollview.SetActive(true);
+        S_sliders.SetActive(true);
         yield return new WaitUntil(() => this.saveImage);
 
         yield return new WaitForEndOfFrame();
@@ -78,8 +78,8 @@ public class SelfieManager : MonoBehaviour
         Destroy(textureImage);
         CameraManager();
         this.saveImage = false;
-        Scrollview.SetActive(false);
-        brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C;
+        S_sliders.SetActive(false);
+        brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
         Debug.Log("foto salva");
     }
 
@@ -110,7 +110,8 @@ public class SelfieManager : MonoBehaviour
         }
         else
         {
-            Scrollview.SetActive(false);
+            brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
+            S_sliders.SetActive(false);
             StopAllCoroutines();
             CameraManager();
             Debug.Log("foto apagada");

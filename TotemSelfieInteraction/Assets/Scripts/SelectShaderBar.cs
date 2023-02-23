@@ -36,34 +36,35 @@ public class SelectShaderBar : MonoBehaviour
         {
             if (scroll_pos < pos[i] + (distance / 2) && scroll_pos > pos[i] - (distance / 2))
             {
-                transform.GetChild(i).GetChild(0).localScale = Vector2.Lerp(transform.GetChild(i).GetChild(0).localScale, new Vector2(1.5f, 1.5f), 0.1f);
+                transform.GetChild(i).GetChild(1).localScale = Vector2.Lerp(transform.GetChild(i).GetChild(1).localScale, new Vector2(1.5f, 1.5f), 0.1f);
                 for (int a = 0; a < pos.Length; a++)
                 {
                     if (a != i)
                     {
-                        transform.GetChild(a).GetChild(0).localScale = Vector2.Lerp(transform.GetChild(a).GetChild(0).localScale, new Vector2(0.8f, 0.8f), 0.1f);
+                        transform.GetChild(a).GetChild(1).localScale = Vector2.Lerp(transform.GetChild(a).GetChild(1).localScale, new Vector2(0.8f, 0.8f), 0.1f);
+                    }
+                }
+                for (int t = 0; t < ShaderSliders.Count; t++)
+                {
+                    ShaderSliders[t].SetActive(false);
+                    switch (transform.GetChild(i).name)
+                    {
+                        case "Contrast":
+                            ShaderSliders[0].SetActive(true);
+                            break;
+                        case "Saturation":
+                            ShaderSliders[1].SetActive(true);
+                            break;
+                        case "Temperature":
+                            ShaderSliders[2].SetActive(true);
+                            break;
+                        case "Brightness":
+                            ShaderSliders[3].SetActive(true);
+                            break;
                     }
                 }
             }
         }
-        for (int i = 0; i < ShaderSliders.Count; i++)
-        {
-            ShaderSliders[i].SetActive(false);
-            switch (transform.GetChild(0).name)
-            {
-                case "Contrast":
-                    ShaderSliders[0].SetActive(true);
-                    break;
-                case "Saturation":
-                    ShaderSliders[1].SetActive(true);
-                    break;
-                case "Temperature":
-                    ShaderSliders[2].SetActive(true);
-                    break;
-                case "Brightness":
-                    ShaderSliders[3].SetActive(true);
-                    break;
-            }
-        }
+        
     }
 }

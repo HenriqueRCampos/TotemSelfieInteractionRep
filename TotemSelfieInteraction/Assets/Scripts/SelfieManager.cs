@@ -2,35 +2,39 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
-using System.Threading;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Windows.WebCam;
 
-public class SelfieManager : MonoBehaviour
+public class SelfieManager : MonoBehaviour 
 {
     [Header("References")]
     [SerializeField] private RectTransform _objToScreenshot;
+    [SerializeField] private GameObject shaderMaterial;
     [SerializeField] private Button _takeScreenshotButton;
-    [SerializeField] private GameObject shaderMaterial, uiSaveButton, uiDeleteButton, S_sliders, photoTimerAnimation;
+    [SerializeField] private GameObject uiSaveButton, uiDeleteButton, ScrollView, photoTimerAnimation;
+    [SerializeField] private RectTransform shaderBar;
 
     [Header("Shader Values Control")]
     [SerializeField] private Slider brightnees;
     [SerializeField] private Slider temperature, contrast, saturation;
 
+    [HideInInspector]public static WebCamTexture webCam;
     private float defoultValue_B = 0.8f, defoultValue_T = 0.1f, defoultValue_C = 1.5f, defoultValue_S = 1.9f;
     private Texture2D textureImage;
     private Material shaderTexture;
-    public WebCamTexture webCam;
     private bool saveImage;
+    private bool webCamStop;
+    private bool resetCamera;
+    private bool isCameraPaused;
     private int indexImage = 00;
+    private float shaderbarX;
 
     void Start()
     {
-        webCam = new();
-       shaderTexture = shaderMaterial.GetComponent<RawImage>().material;
+        webCam = new ();
+        webCam.requestedFPS = 30;
+        shaderTexture = shaderMaterial.GetComponent<RawImage>().material;
         shaderTexture.SetTexture("_Texture2D", webCam);
         CameraManager();
         _takeScreenshotButton.onClick.AddListener(TakeScreenshotAndSaveButton);
@@ -45,13 +49,14 @@ public class SelfieManager : MonoBehaviour
     
     public IEnumerator TakeScreenShotAndSave()
     {
+        isCameraPaused = false;
         photoTimerAnimation.SetActive(true);
-        yield return new WaitForSeconds(10f);
+        yield return new WaitForSeconds(2f);
+        yield return WebCamManagerUpdate(1920,1080,1920,1080);
         photoTimerAnimation.SetActive(false);
-        CameraManager();
         uiSaveButton.SetActive(true);
         uiDeleteButton.SetActive(true);
-        S_sliders.SetActive(true);
+        ScrollView.SetActive(true);
         yield return new WaitUntil(() => this.saveImage);
 
         yield return new WaitForEndOfFrame();
@@ -76,22 +81,68 @@ public class SelfieManager : MonoBehaviour
         indexImage++;
         File.WriteAllBytes(fullPath + $"/ScreenShotImage{indexImage}.png", byteArray);
         Destroy(textureImage);
-        CameraManager();
-        this.saveImage = false;
-        S_sliders.SetActive(false);
+        ScrollView.SetActive(false);
         brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
+        yield return WebCamManagerUpdate(640,480,1920,1380);
+        this.saveImage = false;
         Debug.Log("foto salva");
     }
+    public void SetWebCamResolution(int Width, int Height, float SizeX, float SizeY)
+    {
+        webCam.requestedWidth = Width;
+        webCam.requestedHeight = Height;
 
+        RectTransform ImageRT = _objToScreenshot;
+        RectTransform MaterialRT = shaderMaterial.GetComponent<RectTransform>();
+        ImageRT.sizeDelta = new Vector2(SizeX, SizeY);
+        MaterialRT.sizeDelta = new Vector2(SizeX, SizeY);
+        ImageRT.ForceUpdateRectTransforms();
+        MaterialRT.ForceUpdateRectTransforms();
+    }
     public void CameraManager()
     {
-        if (!webCam.isPlaying)
+        if (!resetCamera)
         {
-            webCam.Play();
+            if (!webCam.isPlaying)
+            {
+                webCam.Play();
+                print("camera ON");
+            }
+            else
+            {
+                if (!webCamStop)
+                {
+                    webCam.Stop();
+                    webCamStop = true;
+                    print("camera OFF");
+                }
+                else
+                {
+                    webCam.Pause();
+                    webCamStop = false;
+                    resetCamera = true;
+                    print("camera PAUSE");
+                }
+            }
         }
         else
         {
-            webCam.Pause();
+            webCam.Stop();
+            resetCamera = false;
+            print("camera OFF");
+        }
+    }
+    private IEnumerator WebCamManagerUpdate(int camResWidth, int camResHeight, float imageSizeX, float imageSizeY)
+    {
+        CameraManager();
+        SetWebCamResolution(camResWidth, camResHeight, imageSizeX, imageSizeY);
+        yield return new WaitForSeconds(1f);
+        CameraManager();
+        yield return new WaitForSeconds(1.3f);
+        if (!isCameraPaused)
+        {
+            CameraManager();
+            isCameraPaused = true;
         }
     }
     private void TakeScreenshotAndSaveButton()
@@ -101,6 +152,9 @@ public class SelfieManager : MonoBehaviour
     }
     public void SaveDeleteScreenShot(bool saveImage)
     {
+        float shaderbarXvalue = shaderBar.position.x;
+        shaderbarXvalue = 0;
+        shaderBar.ForceUpdateRectTransforms();
         uiSaveButton.SetActive(false);
         uiDeleteButton.SetActive(false);
         _takeScreenshotButton.gameObject.SetActive(true);
@@ -110,11 +164,11 @@ public class SelfieManager : MonoBehaviour
         }
         else
         {
-            brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
-            S_sliders.SetActive(false);
             StopAllCoroutines();
-            CameraManager();
-            Debug.Log("foto apagada");
+            StartCoroutine(WebCamManagerUpdate(640, 480, 1920, 1380));
+            brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
+            ScrollView.SetActive(false);
+            print("foto apagada");
         }
     }
 }

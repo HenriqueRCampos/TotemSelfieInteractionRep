@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Mathematics;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -62,6 +63,7 @@ public class SelectShaderBar : MonoBehaviour
                             ShaderSliders[3].SetActive(true);
                             break;
                     }
+
                 }
             }
         }

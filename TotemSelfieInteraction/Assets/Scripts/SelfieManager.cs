@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Windows.WebCam;
 
@@ -74,18 +75,23 @@ public class SelfieManager : MonoBehaviour
         
 
         byte[] byteArray = textureImage.EncodeToPNG();
-        string pathDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string fullPath = Path.Combine(pathDocuments, Application.productName);
-        DirectoryInfo imageFolder = Directory.CreateDirectory(fullPath);
+      //  string pathDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+       // string fullPath = Path.Combine(pathDocuments, Application.productName);
+       // DirectoryInfo imageFolder = Directory.CreateDirectory(fullPath);
         
+       // File.WriteAllBytes(fullPath + $"/ScreenShotImage{indexImage}.png", byteArray);
         indexImage++;
-        File.WriteAllBytes(fullPath + $"/ScreenShotImage{indexImage}.png", byteArray);
+        File.WriteAllBytes(Application.dataPath + $"/Resources/ScreenShotImage{indexImage}.png", byteArray);
         Destroy(textureImage);
         ScrollView.SetActive(false);
         brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
         yield return WebCamManagerUpdate(640,480,1920,1380);
+        resetCamera = true;
+        CameraManager();
         this.saveImage = false;
+        yield return new WaitUntil(() => !this.saveImage && !webCam.isPlaying);
         Debug.Log("foto salva");
+        SceneManager.LoadSceneAsync("Quebra-Cabeca");
     }
     public void SetWebCamResolution(int Width, int Height, float SizeX, float SizeY)
     {
@@ -168,7 +174,7 @@ public class SelfieManager : MonoBehaviour
             StartCoroutine(WebCamManagerUpdate(640, 480, 1920, 1380));
             brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
             ScrollView.SetActive(false);
-            print("foto apagada");
+            Debug.Log("foto apagada");
         }
     }
 }

@@ -6,6 +6,9 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/SelfieScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
+  - enabled: 1
+    path: "Assets/Assets - Quebra-Cabe\xE7a/Assets - NEW/Cenas/Quebra-Cabeca.unity"
+    guid: 9a7625ff2734d9144aabb574aa43c040
   m_configObjects: {}

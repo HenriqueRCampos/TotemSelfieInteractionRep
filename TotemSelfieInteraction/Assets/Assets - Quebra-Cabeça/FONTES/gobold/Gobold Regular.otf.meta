@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: ceb46573f161a40469ee92dc529e96db
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontNames:
+  - Gobold
+  fallbackFontReferences:
+  - {fileID: 12800000, guid: 312c6f0025fc0cd409475eb9bd685934, type: 3}
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  shouldRoundAdvanceValue: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

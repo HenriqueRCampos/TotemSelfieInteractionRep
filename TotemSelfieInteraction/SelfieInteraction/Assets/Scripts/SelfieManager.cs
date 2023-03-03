@@ -52,7 +52,7 @@ public class SelfieManager : MonoBehaviour
     {
         isCameraPaused = false;
         photoTimerAnimation.SetActive(true);
-        yield return new WaitForSeconds(2f);
+        yield return new WaitForSeconds(10f);
         yield return WebCamManagerUpdate(1920,1080,1920,1080);
         photoTimerAnimation.SetActive(false);
         uiSaveButton.SetActive(true);
@@ -75,13 +75,13 @@ public class SelfieManager : MonoBehaviour
         
 
         byte[] byteArray = textureImage.EncodeToPNG();
-      //  string pathDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+        string pathDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
        // string fullPath = Path.Combine(pathDocuments, Application.productName);
        // DirectoryInfo imageFolder = Directory.CreateDirectory(fullPath);
-        
-       // File.WriteAllBytes(fullPath + $"/ScreenShotImage{indexImage}.png", byteArray);
+        string directory = $"/GitHub/TotemSelfieInteractionRep/TotemSelfieInteraction/build/Assets/Resources/ScreenShotImage{indexImage}.png";
+
+        File.WriteAllBytes(pathDocuments + directory, byteArray);
         indexImage++;
-        File.WriteAllBytes(Application.dataPath + $"/Resources/ScreenShotImage{indexImage}.png", byteArray);
         Destroy(textureImage);
         ScrollView.SetActive(false);
         brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;

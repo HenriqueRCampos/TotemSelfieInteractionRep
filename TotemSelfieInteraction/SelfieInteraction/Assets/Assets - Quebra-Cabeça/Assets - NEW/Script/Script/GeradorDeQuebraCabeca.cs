@@ -274,6 +274,9 @@ public class GeradorDeQuebraCabeca : MonoBehaviour
         {
             Camera.main.orthographicSize = 3;
         }
+        if (Screen.height <= Screen.width)
+            Camera.main.orthographicSize /= 2;
+
         for (int i=0; i < Camera.main.GetComponent<Embaralhador>().Pecas.Count; i++)
         {
             Camera.main.GetComponent<Embaralhador>().Pecas[i].GetComponent<PosicaoPeca>().CalcularTamanho();

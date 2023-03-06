@@ -6,7 +6,6 @@ using UnityEngine.UI;
 
 public class BarValuesManager : MonoBehaviour
 {
-    
     [SerializeField]private GameObject scrollView;
     [SerializeField]private List<GameObject> activeEffects;
     void Update()

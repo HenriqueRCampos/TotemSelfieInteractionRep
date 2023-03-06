@@ -63,10 +63,8 @@ public class SelectShaderBar : MonoBehaviour
                             ShaderSliders[3].SetActive(true);
                             break;
                     }
-
                 }
             }
         }
-        
     }
 }

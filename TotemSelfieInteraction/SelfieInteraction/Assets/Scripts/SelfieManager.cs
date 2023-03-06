@@ -7,17 +7,24 @@ using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Windows.WebCam;
 
-public class SelfieManager : MonoBehaviour 
+public class SelfieManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private Button _takeScreenshotButton;
     [SerializeField] private RectTransform _objToScreenshot, shaderBar;
     [SerializeField] private GameObject shaderMaterial, objFakeTexture;
-    [SerializeField] private GameObject saveImageButton, deleteImageButton, ScrollView, photoTimerAnimation, objPhotoSimulation;
+    [SerializeField] private GameObject ScrollView, photoTimerAnimation, objPhotoSimulation;
+    [SerializeField] private GameObject saveImageButton, deleteImageButton;
+    private WebCamTexture webCam;
+    private Texture2D textureImage, fakeTextureImage;
+    private Material shaderTexture;
+    private GameUIManager gameUIManager;
 
-    [Header("Shader Values Sliders")]
+    [Header("Shader Values")]
     [SerializeField] private Slider brightnees;
     [SerializeField] private Slider temperature, contrast, saturation;
+    [SerializeField] private Scrollbar shaderScrollbar;
+    private readonly float defoultValue_B = 0.8f, defoultValue_T = 0.1f, defoultValue_C = 1.5f, defoultValue_S = 1.9f;
 
     [Header("Camera Resolution")]
     [SerializeField] private int widhtResolution = 1920;
@@ -33,16 +40,16 @@ public class SelfieManager : MonoBehaviour
 
     [Header("Take Photo")]
     [SerializeField] private float timetoTakePhoto = 8f;
-
-    private WebCamTexture webCam;
-    private Texture2D textureImage, fakeTextureImage;
-    private Material shaderTexture;
     private int indexImage = 00;
     private bool saveImage, webCamStop, resetCamera, isCameraPaused;
-    private readonly float defoultValue_B = 0.8f, defoultValue_T = 0.1f, defoultValue_C = 1.5f, defoultValue_S = 1.9f;
 
+    private void Awake()
+    {
+        gameUIManager = GetComponent<GameUIManager>();
+    }
     void Start()
     {
+        gameUIManager.SetActiveUiButtons(false, 0);
         webCam = new ();
         webCam.requestedFPS = 30;
         shaderTexture = shaderMaterial.GetComponent<RawImage>().material;
@@ -62,19 +69,21 @@ public class SelfieManager : MonoBehaviour
     {
         isCameraPaused = false;
         photoTimerAnimation.SetActive(true);
+
         yield return new WaitForSeconds(timetoTakePhoto);
+        
         yield return CreateFakeImageTexture();
+        
         yield return WebCamManagerUpdate(widhtResolution, heightResolution, widhtImageSize, heightImageSize);
         objPhotoSimulation.SetActive(true);
         objFakeTexture.SetActive(false);
         photoTimerAnimation.SetActive(false);
-        saveImageButton.SetActive(true);
-        deleteImageButton.SetActive(true);
+        gameUIManager.SetActiveUiButtons(true, 0);
         ScrollView.SetActive(true);
+        
         yield return new WaitUntil(() => this.saveImage);
 
         yield return new WaitForEndOfFrame();
-        
         Vector3[] corners = new Vector3[4];
         _objToScreenshot.GetWorldCorners(corners);
 
@@ -98,10 +107,12 @@ public class SelfieManager : MonoBehaviour
         Destroy(textureImage);
         ScrollView.SetActive(false);
         brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
+       
         yield return WebCamManagerUpdate(defoulWidhtResolution, defoultHeightResolution, defoultWidhtImageSize, defoultHeightImageSize);
         resetCamera = true;
         CameraManager();
         this.saveImage = false;
+        
         yield return new WaitUntil(() => !this.saveImage && !webCam.isPlaying);
         Debug.Log("foto salva");
         SceneManager.LoadSceneAsync("Quebra-Cabeca");
@@ -128,9 +139,8 @@ public class SelfieManager : MonoBehaviour
         objFakeTexture.GetComponent<RawImage>().texture = result;
         objFakeTexture.SetActive(true);
         Destroy(fakeTextureImage);
-
     }
-    public void SetWebCamResolution(int Width, int Height, float SizeX, float SizeY)
+    public void SetResolution_ImageSize(int Width, int Height, float SizeX, float SizeY)
     {
         webCam.requestedWidth = Width;
         webCam.requestedHeight = Height;
@@ -174,9 +184,11 @@ public class SelfieManager : MonoBehaviour
     private IEnumerator WebCamManagerUpdate(int camResWidth, int camResHeight, float imageSizeX, float imageSizeY)
     {
         CameraManager();
-        SetWebCamResolution(camResWidth, camResHeight, imageSizeX, imageSizeY);
+        SetResolution_ImageSize(camResWidth, camResHeight, imageSizeX, imageSizeY);
+        
         yield return new WaitForSeconds(1f);
         CameraManager();
+        
         yield return new WaitForSeconds(1.2f);
         if (!isCameraPaused)
         {
@@ -184,24 +196,16 @@ public class SelfieManager : MonoBehaviour
             isCameraPaused = true;
         }
     }
-
-    private void SetActiveUiElements()
-    {
-
-    }
-
-
     private void TakeScreenshotAndSaveButton()
     {
         StartCoroutine(TakeScreenShotAndSave());
-        _takeScreenshotButton.gameObject.SetActive(false);
+        gameUIManager.SetActiveUiButtons(false);
     }
-    public void SaveDeleteScreenShot(bool saveImage)
+    public void OnClickSaveDeleteButton(bool saveImage)
     {
-        saveImageButton.SetActive(false);
-        deleteImageButton.SetActive(false);
+        shaderScrollbar.value = 0;
+        gameUIManager.SetActiveUiButtons(false);
         objPhotoSimulation.SetActive(false);
-        _takeScreenshotButton.gameObject.SetActive(true);
         if (saveImage)
         {
             this.saveImage = true;
@@ -212,9 +216,8 @@ public class SelfieManager : MonoBehaviour
             StartCoroutine(WebCamManagerUpdate(defoulWidhtResolution, defoultHeightResolution, defoultWidhtImageSize, defoultHeightImageSize));
             brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
             ScrollView.SetActive(false);
+            gameUIManager.SetActiveUiButtons(true, new List<int>(){1,2});
             Debug.Log("foto apagada");
         }
     }
 }
-
-

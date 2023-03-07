@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: "Assets/Assets - Quebra-Cabe\xE7a/Assets - NEW/Cenas/Quebra-Cabeca.unity"
     guid: 9a7625ff2734d9144aabb574aa43c040
+  - enabled: 1
+    path: Assets/Scenes/FinalScene.unity
+    guid: 6d21906d070edea42afe5f03e143984a
   m_configObjects: {}

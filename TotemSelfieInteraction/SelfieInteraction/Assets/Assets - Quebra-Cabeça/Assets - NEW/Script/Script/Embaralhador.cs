@@ -167,7 +167,7 @@ public class Embaralhador : MonoBehaviour
                     Embaralhar = false;
                 }
                 TelaResultado.SetActive(true);
-                SceneManager.LoadSceneAsync("SelfieScene");
+                SceneManager.LoadSceneAsync("FinalScene");
 #if UNITY_ANDROID
                 TelaResultado.GetComponent<Animator>().SetInteger("Finalizacao", 2);
 #else
@@ -181,7 +181,7 @@ public class Embaralhador : MonoBehaviour
                     TelaResultado.transform.GetChild(0).GetComponent<Text>().text = "TEMPO ESGOTADO!";
                     Embaralhar = false;
                     TelaResultado.SetActive(true);
-                    SceneManager.LoadSceneAsync("SelfieScene");
+                    SceneManager.LoadSceneAsync("FinalScene");
 #if UNITY_ANDROID
                     TelaResultado.GetComponent<Animator>().SetInteger("Finalizacao", 2);
 #else

@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
+using UnityEngine.Experimental.Rendering;
+using UnityEngine.Experimental.Rendering.RenderGraphModule;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 using UnityEngine.Windows.WebCam;
@@ -15,7 +17,7 @@ public class SelfieManager : MonoBehaviour
     [SerializeField] private GameObject shaderMaterial, objFakeTexture;
     [SerializeField] private GameObject ScrollView, photoTimerAnimation, objPhotoSimulation;
     [SerializeField] private GameObject saveImageButton, deleteImageButton;
-    private WebCamTexture webCam;
+    [NonSerialized] public WebCamTexture webCam;
     private Texture2D textureImage, fakeTextureImage;
     private Material shaderTexture;
     private GameUIManager gameUIManager;
@@ -50,7 +52,7 @@ public class SelfieManager : MonoBehaviour
     void Start()
     {
         gameUIManager.SetActiveUiButtons(false, 0);
-        webCam = new ();
+        webCam = new();
         webCam.requestedFPS = 30;
         shaderTexture = shaderMaterial.GetComponent<RawImage>().material;
         shaderTexture.SetTexture("_MainTexture", webCam);
@@ -64,7 +66,6 @@ public class SelfieManager : MonoBehaviour
         shaderTexture.SetFloat("_Contrast_Intensity", contrast.value);
         shaderTexture.SetFloat("_Saturation_Intensity", saturation.value);
     }
-    
     public IEnumerator TakeScreenShotAndSave()
     {
         isCameraPaused = false;
@@ -94,7 +95,7 @@ public class SelfieManager : MonoBehaviour
         textureImage = new Texture2D(width, height, TextureFormat.RGB48, false);
         textureImage.ReadPixels(new Rect(startX, startY, width, height), 0, 0);
         textureImage.Apply();
-
+        
         indexImage++;
         byte[] byteArray = textureImage.EncodeToPNG();
 #if UNITY_EDITOR

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -5,9 +6,14 @@ using UnityEngine.UIElements;
 
 public class GameUIManager : MonoBehaviour
 {
+    [NonSerialized] public bool themeAplyed, hideTheme;
+    public GameObject ThemeScrollView;
     public List<GameObject> uiButtons;
-    [SerializeField] private GameObject ThemeScrollView;
+
     private SelfieManager selfieManager;
+    private List<int> indexList;
+    private Vector2 beginScale = new(0.1f, 0.1f);
+    private Vector2 finalSacele = new(1f, 1f);
 
     private void Awake()
     {
@@ -15,58 +21,70 @@ public class GameUIManager : MonoBehaviour
     }
     private void Update()
     {
-        if (selfieManager.webCam.isPlaying)
+        for (int i = 0; i < uiButtons.Count; i++)
         {
-            
-        }
-        else
-        {
-
+            if (uiButtons[i].activeInHierarchy)
+            {
+                uiButtons[i].transform.localScale = Vector2.Lerp(uiButtons[i].transform.localScale, finalSacele, 0.01f);
+            }
         }
     }
-    private IEnumerator ShowUIElements()
+    public void ThemeView(bool active)
     {
-
-        yield return new WaitForSeconds(1f);
-        
+        if (active)
+        {
+            ChooseButtonsToActive(new List<int>() { 2, 3 });
+        }
+        ThemeScrollView.SetActive(active);
+    }
+    public void AplyThemetoToTexture()
+    {
+        themeAplyed = true;
+        selfieManager.themeScrollbar.value = 0;
     }
 
-    /// <summary>
-    /// Active/Desactive all ButtonObjects
-    /// </summary>
-    public void SetActiveUiButtons(bool active)
+    public void ChooseButtonsToActive()
     {
         for (int i = 0; i < uiButtons.Count; i++)
         {
-            uiButtons[i].SetActive(active);
+            uiButtons[i].SetActive(false);
         }
     }
-    /// <summary>
-    /// Active/Desactive all ButtonObjects, else the objects index
-    /// </summary>
-    public void SetActiveUiButtons(bool active, int elseObjIndex)
+    public void ChooseButtonsToActive(int elseObjIndex)
     {
+        List<int> list = new(){elseObjIndex};
         for (int i = 0; i < uiButtons.Count; i++)
         {
+            uiButtons[i].SetActive(false);
             if (i == elseObjIndex)
             {
-                continue;
+                indexList = list.GetRange(0, list.Count);
+                StartCoroutine(DelayToActiveButtons());
             }
-            uiButtons[i].SetActive(active);
         }
     }
-    /// <summary>
-    /// Active/Desactive all ButtonObjects, else the objects at list
-    /// </summary>
-    public void SetActiveUiButtons(bool active, List<int> elseObjIndex)
+    public void ChooseButtonsToActive(List<int> elseObjIndex)
     {
         for (int i = 0; i < uiButtons.Count; i++)
         {
+            uiButtons[i].SetActive(false);
             if (elseObjIndex.Contains(i))
             {
-                continue;
+                indexList = elseObjIndex.GetRange(0, elseObjIndex.Count);
+                StartCoroutine(DelayToActiveButtons());
             }
-            uiButtons[i].SetActive(active);
+        }
+    }
+    private IEnumerator DelayToActiveButtons()
+    {
+        foreach (GameObject button in uiButtons)
+        {
+            button.transform.localScale = beginScale;
+        }
+        yield return new WaitForSeconds(1f);
+        foreach (int index in indexList)
+        {
+            uiButtons[index].SetActive(true);
         }
     }
 }

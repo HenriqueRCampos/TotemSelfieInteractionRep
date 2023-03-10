@@ -6,8 +6,13 @@ using UnityEngine.UI;
 
 public class BarValuesManager : MonoBehaviour
 {
-    [SerializeField]private GameObject scrollView;
-    [SerializeField]private List<GameObject> activeEffects;
+    [SerializeField]private GameObject scrollView, themeView;
+    [SerializeField]private List<GameObject> activeEffects, activeThemes;
+    private GameUIManager gameUIManager;
+    private void Awake()
+    {
+        gameUIManager = GameObject.Find("Canvas").GetComponent<GameUIManager>();
+    }
     void Update()
     {
         for (int i = 0; i < activeEffects.Count; i++)
@@ -15,6 +20,13 @@ public class BarValuesManager : MonoBehaviour
             if (!scrollView.activeInHierarchy)
             {
                activeEffects[i].SetActive(false);
+            }
+        }
+        for (int i = 0; i < activeThemes.Count; i++)
+        {
+            if (!themeView.activeInHierarchy && gameUIManager.hideTheme)
+            {
+                activeThemes[i].SetActive(false);
             }
         }
     }

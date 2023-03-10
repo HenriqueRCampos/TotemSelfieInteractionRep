@@ -25,7 +25,7 @@ public class SelfieManager : MonoBehaviour
     [Header("Shader Values")]
     [SerializeField] private Slider brightnees;
     [SerializeField] private Slider temperature, contrast, saturation;
-    [SerializeField] private Scrollbar shaderScrollbar;
+    [HideInInspector] public Scrollbar shaderScrollbar, themeScrollbar;
     private readonly float defoultValue_B = 0.8f, defoultValue_T = 0.1f, defoultValue_C = 1.5f, defoultValue_S = 1.9f;
 
     [Header("Camera Resolution")]
@@ -42,8 +42,7 @@ public class SelfieManager : MonoBehaviour
 
     [Header("Take Photo")]
     [SerializeField] private float timetoTakePhoto = 8f;
-    private int indexImage = 00;
-    private bool saveImage, webCamStop, resetCamera, isCameraPaused;
+    private bool webCamStop, resetCamera, saveImage, isCameraPaused;
 
     private void Awake()
     {
@@ -51,7 +50,7 @@ public class SelfieManager : MonoBehaviour
     }
     void Start()
     {
-        gameUIManager.SetActiveUiButtons(false, 0);
+        gameUIManager.ChooseButtonsToActive(0);
         webCam = new();
         webCam.requestedFPS = 30;
         shaderTexture = shaderMaterial.GetComponent<RawImage>().material;
@@ -68,6 +67,7 @@ public class SelfieManager : MonoBehaviour
     }
     public IEnumerator TakeScreenShotAndSave()
     {
+        gameUIManager.hideTheme = false;
         isCameraPaused = false;
         photoTimerAnimation.SetActive(true);
 
@@ -79,9 +79,13 @@ public class SelfieManager : MonoBehaviour
         objPhotoSimulation.SetActive(true);
         objFakeTexture.SetActive(false);
         photoTimerAnimation.SetActive(false);
-        gameUIManager.SetActiveUiButtons(true, 0);
+        gameUIManager.ThemeView(true);
+
+        yield return new WaitUntil(() => gameUIManager.themeAplyed);
+        gameUIManager.ChooseButtonsToActive(new List<int>() {1,2});
+        gameUIManager.ThemeView(false);
         ScrollView.SetActive(true);
-        
+
         yield return new WaitUntil(() => this.saveImage);
 
         yield return new WaitForEndOfFrame();
@@ -96,16 +100,16 @@ public class SelfieManager : MonoBehaviour
         textureImage.ReadPixels(new Rect(startX, startY, width, height), 0, 0);
         textureImage.Apply();
         
-        indexImage++;
         byte[] byteArray = textureImage.EncodeToPNG();
 #if UNITY_EDITOR
-        File.WriteAllBytes(Application.dataPath + $"/Resources/ScreenShotImage{indexImage}.png", byteArray);
+        File.WriteAllBytes(Application.dataPath + "/Resources/ScreenShotImage.png", byteArray);
 #else
         string pathDocuments = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
-        string directory = pathDocuments + $"/GitHub/TotemSelfieInteractionRep/TotemSelfieInteraction/build/Assets/Resources/ScreenShotImage{indexImage}.png";
+        string directory = pathDocuments + "/GitHub/TotemSelfieInteractionRep/TotemSelfieInteraction/build/Assets/Resources/ScreenShotImage.png";
         File.WriteAllBytes(directory, byteArray);
 #endif
         Destroy(textureImage);
+        gameUIManager.hideTheme = true;
         ScrollView.SetActive(false);
         brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
        
@@ -200,12 +204,14 @@ public class SelfieManager : MonoBehaviour
     private void TakeScreenshotAndSaveButton()
     {
         StartCoroutine(TakeScreenShotAndSave());
-        gameUIManager.SetActiveUiButtons(false);
+        gameUIManager.ChooseButtonsToActive();
     }
     public void OnClickSaveDeleteButton(bool saveImage)
     {
+        gameUIManager.themeAplyed = false;
         shaderScrollbar.value = 0;
-        gameUIManager.SetActiveUiButtons(false);
+        themeScrollbar.value = 0;
+        gameUIManager.ChooseButtonsToActive();
         objPhotoSimulation.SetActive(false);
         if (saveImage)
         {
@@ -217,7 +223,9 @@ public class SelfieManager : MonoBehaviour
             StartCoroutine(WebCamManagerUpdate(defoulWidhtResolution, defoultHeightResolution, defoultWidhtImageSize, defoultHeightImageSize));
             brightnees.value = defoultValue_B; temperature.value = defoultValue_T; contrast.value = defoultValue_C; saturation.value = defoultValue_S;
             ScrollView.SetActive(false);
-            gameUIManager.SetActiveUiButtons(true, new List<int>(){1,2});
+            gameUIManager.ThemeView(false);
+            gameUIManager.hideTheme = true;
+            gameUIManager.ChooseButtonsToActive(0);
             Debug.Log("foto apagada");
         }
     }

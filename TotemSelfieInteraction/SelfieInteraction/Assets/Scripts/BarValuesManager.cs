@@ -6,12 +6,12 @@ using UnityEngine.UI;
 
 public class BarValuesManager : MonoBehaviour
 {
-    [SerializeField]private GameObject scrollView, themeView;
+    [SerializeField]private GameObject scrollView, themeView, canvas;
     [SerializeField]private List<GameObject> activeEffects, activeThemes;
     private GameUIManager gameUIManager;
     private void Awake()
     {
-        gameUIManager = GameObject.Find("Canvas").GetComponent<GameUIManager>();
+        gameUIManager = canvas.GetComponent<GameUIManager>();
     }
     void Update()
     {

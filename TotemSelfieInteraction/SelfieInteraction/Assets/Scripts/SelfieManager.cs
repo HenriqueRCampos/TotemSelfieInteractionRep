@@ -25,7 +25,7 @@ public class SelfieManager : MonoBehaviour
     [Header("Shader Values")]
     [SerializeField] private Slider brightnees;
     [SerializeField] private Slider temperature, contrast, saturation;
-    [HideInInspector] public Scrollbar shaderScrollbar, themeScrollbar;
+    [HideInInspector] public Scrollbar shaderScrollbar;
     private readonly float defoultValue_B = 0.8f, defoultValue_T = 0.1f, defoultValue_C = 1.5f, defoultValue_S = 1.9f;
 
     [Header("Camera Resolution")]
@@ -119,7 +119,6 @@ public class SelfieManager : MonoBehaviour
         this.saveImage = false;
         
         yield return new WaitUntil(() => !this.saveImage && !webCam.isPlaying);
-        Debug.Log("foto salva");
         SceneManager.LoadSceneAsync("Quebra-Cabeca");
     }
     private IEnumerator CreateFakeImageTexture()
@@ -210,7 +209,6 @@ public class SelfieManager : MonoBehaviour
     {
         gameUIManager.themeAplyed = false;
         shaderScrollbar.value = 0;
-        themeScrollbar.value = 0;
         gameUIManager.ChooseButtonsToActive();
         objPhotoSimulation.SetActive(false);
         if (saveImage)
@@ -226,7 +224,6 @@ public class SelfieManager : MonoBehaviour
             gameUIManager.ThemeView(false);
             gameUIManager.hideTheme = true;
             gameUIManager.ChooseButtonsToActive(0);
-            Debug.Log("foto apagada");
         }
     }
 }

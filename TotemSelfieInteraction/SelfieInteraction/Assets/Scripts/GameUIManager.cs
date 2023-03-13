@@ -2,23 +2,19 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using UnityEngine.UIElements;
 
 public class GameUIManager : MonoBehaviour
 {
     [NonSerialized] public bool themeAplyed, hideTheme;
-    public GameObject ThemeScrollView;
     public List<GameObject> uiButtons;
-
-    private SelfieManager selfieManager;
+    public GameObject ThemeScrollView;
+    [SerializeField] private Scrollbar themeScrollbar;
     private List<int> indexList;
     private Vector2 beginScale = new(0.1f, 0.1f);
     private Vector2 finalSacele = new(1f, 1f);
 
-    private void Awake()
-    {
-        selfieManager = GetComponent<SelfieManager>();
-    }
     private void Update()
     {
         for (int i = 0; i < uiButtons.Count; i++)
@@ -31,8 +27,10 @@ public class GameUIManager : MonoBehaviour
     }
     public void ThemeView(bool active)
     {
+
         if (active)
         {
+            themeScrollbar.value = 0f;
             ChooseButtonsToActive(new List<int>() { 2, 3 });
         }
         ThemeScrollView.SetActive(active);
@@ -40,7 +38,6 @@ public class GameUIManager : MonoBehaviour
     public void AplyThemetoToTexture()
     {
         themeAplyed = true;
-        selfieManager.themeScrollbar.value = 0;
     }
 
     public void ChooseButtonsToActive()
